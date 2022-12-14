@@ -63,13 +63,18 @@ adj = g.addEdge(adj,7, 8, 7);
     }
   }
    //returns min val
-   function findMinVal(D, vertex, mstSet) {
-
+   function findMinVal(D, vertex, mstSet, V) {
+    let oldParent = vertex;
     let copyD = D;
     //    let result = -1;
-    for (let i =0 ; i < mstSet.length; i++) {
-        D.set(mstSet[i], Number.MAX_VALUE);
+    if (mstSet.size != 0) {
+    for (let i =0 ; i < V; i++) {
+        if (mstSet.has(vertices[i])) {
+            D.set(vertices[i], Number.MAX_VALUE);
+        }
+       
     }
+}
 
     let result = vertex;
        const min = Math.min(...D.values());
@@ -79,13 +84,13 @@ adj = g.addEdge(adj,7, 8, 7);
         result = key;
     
          D = copyD;
-    return result;
+    return [result, oldParent];
    }
 
    //once graph is created, implement prim's algorithm
    function MST(adj, a, b,listOfAdjency) {
        // create a set that keeps track of vertices already in MST
-       let mstSet = [];
+       let mstSet = new Set();
 
     const D = new Map();
     D.set(vertices[0], 0); // starting vertex being 0 is set equal to 0
@@ -97,12 +102,11 @@ adj = g.addEdge(adj,7, 8, 7);
        
         let k = 0;
         let minKey = 0;
+        let oldParent = 0;
        
          // while mstSet does not include all vertices
-        while (mstSet.length != vertices.length) {
-            if (mstSet.indexOf(minKey) == -1) {
-            mstSet.push(minKey);
-            }
+        while (mstSet.size != vertices.length) {
+          
 
                  // update all values of adjacent vertices
        let values = listOfAdjency.get(minKey);
@@ -110,8 +114,14 @@ adj = g.addEdge(adj,7, 8, 7);
                 D.set(values[i], adj[minKey][i][1]); // set key of adjacent vertext equal to weight it makes with minKey
             }
    
-       minKey = findMinVal(D, minKey, mstSet);
-  
+       let minKeyArr = findMinVal(D, minKey, mstSet,V);
+       minKey = minKeyArr[0];
+      
+
+       if (mstSet.has(minKey) == false) {
+        mstSet.add(oldParent,minKey);
+        }
+        oldParent = minKeyArr[1];
 k++;
         }
     
